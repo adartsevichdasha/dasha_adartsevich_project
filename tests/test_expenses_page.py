@@ -1,0 +1,11 @@
+def test_sign_in_page(expenses, maximize_window):
+    expenses.check_page_layout()
+    expenses.check_add_operation(6)
+    expenses.check_change_operation(3)
+    expenses.check_total_category_expenses_is_calculated(100)
+    expenses.check_total_expenses_calculated()
+    expenses.check_add_category()
+    expenses.check_all_time_date_filter()
+    expenses.check_year_date_filter()
+    expenses.check_month_date_filter()
+    expenses.check_delete_operation()
