@@ -52,7 +52,7 @@ class Credit(BasePage):
         assert len(list_of_credits_updated) == (len(list_of_credits) + 1)
 
     def check_edit_credit_name(self, new_name):
-        self.driver.find_elements(By.XPATH, '//*[@class="Button_link__5qRQJ hex-btn"]')[3].click()
+        self.driver.find_elements(By.XPATH, '//*[@class="Button_link__5qRQJ hex-btn"]')[-1].click()
         WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="0"]')))
         self.driver.find_elements(By.XPATH, '//*[@class="Button_button__QS2NC"]')[1].click()
         old_name = self.driver.find_elements(By.XPATH, '//*[@type="text"]')[0]
@@ -219,11 +219,14 @@ class Credit(BasePage):
         confirm_button.click()
         WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(
             (By.XPATH, '//*[@class="Button_button__QS2NC btn color-credit"]')))
+        sleep(4)
         cancel_button = self.driver.find_element(By.XPATH, '//*[@class="Button_button__QS2NC btn color-credit"]')
         assert cancel_button is not None
+        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@title="Credits"]')))
         self.driver.find_element(By.XPATH, '//*[@title="Credits"]').click()
         WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located(
             (By.XPATH, '//*[@class="Button_link__5qRQJ hex-btn"]')))
+        sleep(4)
         finished_credits_final = self.driver.find_element(By.XPATH, '//*[@class="btn-filter color-credit '
                                                                     '_inp-size2"]').text
         assert finished_credits_final == f'Finished ({number_2 + 1})'
@@ -232,6 +235,7 @@ class Credit(BasePage):
         self.driver.find_element(By.XPATH, '//*[@class="btn-filter color-credit _inp-size2"]').click()
         WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located(
             (By.XPATH, '//*[@class="Button_link__5qRQJ hex-btn"]')))
+        sleep(4)
         list_of_finished_credits_updated = self.driver.find_elements(By.XPATH, '//*[@class="Button_link__5qRQJ '
                                                                                'hex-btn"]')
         assert len(list_of_finished_credits_updated) == (len(list_of_finished_credits) + 1)

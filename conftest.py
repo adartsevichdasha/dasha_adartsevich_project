@@ -4,7 +4,7 @@ from pages.main_page import MainPage
 from pages.sign_up_page import SignUp
 from pages.sign_in_page import SignIn
 from pages.expenses_page import Expenses
-from pages.credit_page import Credit
+from pages.credits_page import Credit
 from pages.incomes_page import Incomes
 from pages.transactions_page import Transactions
 
