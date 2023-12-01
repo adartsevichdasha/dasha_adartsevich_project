@@ -12,6 +12,7 @@ from pages.transactions_page import Transactions
 @pytest.fixture()
 def driver():
     chrome_driver = webdriver.Chrome()
+    chrome_driver.maximize_window()
     return chrome_driver
 
 
@@ -48,8 +49,3 @@ def credit(driver):
 @pytest.fixture()
 def transactions(driver):
     return Transactions(driver)
-
-
-@pytest.fixture()
-def maximize_window(driver):
-    return driver.maximize_window()

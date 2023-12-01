@@ -1,4 +1,4 @@
-def test_sign_in_page(expenses, maximize_window):
+def test_sign_in_page(expenses):
     expenses.check_page_layout()
     expenses.check_add_operation(6)
     expenses.check_change_operation(3)

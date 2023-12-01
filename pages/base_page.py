@@ -16,8 +16,3 @@ class BasePage:
 
     def find_all(self, locator):
         return self.driver.find_elements(*locator)
-
-    def login_user(self, email, password):
-        self.driver.find_element(By.ID, 'loginform-username').send_keys(f'{email}')
-        self.driver.find_element(By.ID, 'loginform-password').send_keys(password)
-        self.driver.find_element(By.XPATH, '//*[@class="login100-form-btn button-loading"]').click()
