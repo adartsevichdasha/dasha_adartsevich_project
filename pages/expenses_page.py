@@ -31,7 +31,8 @@ created_cost = (By.XPATH, '//*[@class="list-value color-expense"]')
 edit_button = (By.XPATH, '//*[@title="Edit"]')
 value_field = (By.XPATH, '//*[@class="currency "]')
 save_button = (By.XPATH, '//*[@class="btn _inp-size4 color-expense"]')
-changed_value =
+saved_cost = (By.XPATH, '//*[@class="list-value color-expense"]')
+total_category_cost_1 = (By.XPATH, '//*[@class="list-value _large"]')
 
 
 class Expenses(BasePage):
@@ -84,9 +85,11 @@ class Expenses(BasePage):
         self.find_all(select_date_button)[2].click()
         self.find(date_picker).click()
 
-    def check_created_operation(self, cost):
-        date = self.find_all(selected_date)[2].text
+    def input_cost_value(self, cost):
         self.find(expense_value).send_keys(cost)
+
+    def check_created_operation(self, entered_cost):
+        date = self.find_all(selected_date)[2].text
         self.find(ok_button).click()
         self.driver.get('https://new.cubux.net/team/301091/expense/details')
         WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.TAG_NAME, 'time')))
@@ -94,7 +97,7 @@ class Expenses(BasePage):
         expense_date = self.find_all(created_date)[0].text
         cost_info = self.find_all(created_cost)[0].text
         assert expense_date == date
-        assert cost_info == f'- AFN {cost}'
+        assert cost_info == f'- AFN {entered_cost}'
 
     def click_edit_button(self):
         self.find_all(edit_button)[0].click()
@@ -106,35 +109,39 @@ class Expenses(BasePage):
         self.find(value_field).send_keys(value)
         WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, f'//*[@value="{value}"]')))
 
-    def click_save_button(self):
-
+    def check_saved_changes(self, set_value):
         self.find(save_button).click()
         WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.TAG_NAME, 'time')))
-        cost = self.driver.find_elements(By.XPATH, '//*[@class="list-value color-expense"]')[0].text
-        assert cost == f'- AFN {value}'
+        cost = self.find_all(saved_cost)[0].text
+        assert cost == f'- AFN {set_value}'
 
-    def check_total_category_expenses_is_calculated(self, value_2):
-        cost_1 = self.driver.find_elements(By.XPATH, '//*[@class="list-value _large"]')[0].text
+    def save_added_expense(self):
+        self.find(ok_button).click()
+        WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.TAG_NAME, 'time')))
+        self.driver.implicitly_wait(10)
+
+    def check_total_category_cost_value(self):
+        cost_1 = self.find_all(total_category_cost_1)[0].text
         list_of_cost_1 = cost_1.split()
         value = list_of_cost_1[1]
         if ',' in value:
             new_value = value.replace(',', '')
         else:
             new_value = value
-        self.driver.execute_script("window.scrollTo(document.body.scrollHeight, 0);")
-        self.driver.find_element(By.XPATH, '//*[@class="Button_link__5qRQJ icon _size1 _extra-space color-expense"]')\
-            .click()
-        self.driver.find_elements(By.XPATH, '//*[@class="hex-btn"]')[0].click()
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.XPATH, '//*[@class="hex-btn"]')))
-        self.driver.find_elements(By.XPATH, '//*[@class="hex-btn"]')[4].click()
-        self.driver.find_elements(By.XPATH, '//*[@class="hex-btn"]')[1].click()
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.XPATH, '//*[@class="hex-btn"]')))
-        self.driver.find_elements(By.XPATH, '//*[@class="hex-btn"]')[4].click()
-        self.driver.find_elements(By.XPATH, '//*[@class="hex-btn"]')[2].click()
-        self.driver.find_element(By.XPATH, '//*[@class="react-datepicker__today-button"]').click()
-        self.driver.find_element(By.XPATH, '//*[@class="currency"]').send_keys(value_2)
-        self.driver.find_element(By.XPATH, '//*[@class="Button_button__QS2NC btn _inp-size4 color-expense"]').click()
-        category_cost = int(new_value) + value_2
+        self.click_create_button()
+        self.select_account()
+        self.select_category()
+        self.select_date()
+        self.input_cost_value(2)
+        value_2 = self.driver.find_element(By.XPATH, '//*[@class="Grid_col__NSAHt color-expense"]').text
+        self.save_added_expense()
+        list_of_cost_2 = value_2.split()
+        value_3 = list_of_cost_2[-1]
+        if ',' in value_3:
+            new_value_1 = value_3.replace(',', '')
+        else:
+            new_value_1 = value_3
+        category_cost = int(new_value) + int(new_value_1)
         category_cost_1 = str(category_cost)
         category_cost_2 = list(category_cost_1)
         if len(category_cost_2) > 3:
@@ -142,8 +149,6 @@ class Expenses(BasePage):
             category_cost_3 = ''.join(category_cost_2)
         else:
             category_cost_3 = category_cost_1
-        WebDriverWait(self.driver, 10).until(EC.visibility_of_all_elements_located((By.XPATH, '//*[@class="list-value '
-                                                                                              '_large"]')))
         cost_2 = self.driver.find_elements(By.XPATH, '//*[@class="list-value _large"]')[0].text
         assert cost_2 == f'AFN {category_cost_3}'
 
